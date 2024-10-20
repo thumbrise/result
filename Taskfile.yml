@@ -1,0 +1,17 @@
+version: '3.17'
+
+
+tasks:
+  test:
+    desc: 'Запустить тесты'
+    cmd: php vendor/bin/phpunit --no-coverage --dont-report-useless-tests --colors=never --do-not-cache-result
+
+  lint:
+    desc: 'Анализировать код инструментами синтаксического и стилистического анализа'
+    cmd: php ./vendor/bin/php-cs-fixer check
+
+  format:
+    desc: 'Отформатировать проект'
+    cmd: php ./vendor/bin/php-cs-fixer fix
+
+
