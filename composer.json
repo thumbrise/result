@@ -1,5 +1,5 @@
 {
-    "name": "thumbrise/toolkit",
+    "name": "thumbrise/result",
     "authors": [
         {
             "name": "Ruslan Kokoev",
@@ -8,15 +8,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Thumbrise\\Toolkit\\": "src/"
-        },
-        "files": [
-            "src/Helpers/helpers.php"
-        ]
+            "Thumbrise\\Result\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Thumbrise\\Toolkit\\Tests\\": "tests/"
+            "Thumbrise\\Result\\Tests\\": "tests/"
         }
     },
     "license": [
@@ -32,22 +29,5 @@
         "friendsofphp/php-cs-fixer": "^3.62"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "scripts": {
-        "phpunit": [
-            "vendor/bin/phpunit"
-        ],
-        "phpstan": [
-            "vendor/bin/phpstan analyse --memory-limit 4G"
-        ],
-        "cs": [
-            "vendor/bin/phpcs -s"
-        ],
-        "cs-fix": [
-            "vendor/bin/phpcbf"
-        ],
-        "cs-report": [
-            "vendor/bin/phpcs --report-file=./phpcs.report.xml --report=xml"
-        ]
-    }
+    "prefer-stable": true
 }
