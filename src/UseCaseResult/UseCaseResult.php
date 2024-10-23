@@ -40,16 +40,28 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      */
     public function __call(string $method, array $parameters)
     {
-        $result = $this->forwardDecoratedCallTo($this->httpResponse, $method, $parameters);
-
-        $this->httpResponse->setJson($this);
-
-        return $result;
+        return $this->forwardDecoratedCallTo($this->httpResponse, $method, $parameters);
     }
 
     public function __toString(): string
     {
         return json_encode($this);
+    }
+
+    /**
+     * Sets the response status code.
+     *
+     * If the status text is null it will be automatically populated for the known
+     * status codes and left empty otherwise.
+     *
+     * @final
+     */
+    public function setStatusCode(int $code, ?string $text = null): JsonResponse
+    {
+        $result = $this->httpResponse->setStatusCode($code, $text);
+        $this->httpResponse->setJson($this);
+
+        return $result;
     }
 
     abstract public function isError(): bool;
