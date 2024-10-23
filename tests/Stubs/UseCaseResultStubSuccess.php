@@ -4,6 +4,9 @@ namespace Thumbrise\Result\Tests\Stubs;
 
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 
+/**
+ * @internal
+ */
 class UseCaseResultStubSuccess extends UseCaseResult
 {
     public function isError(): bool
