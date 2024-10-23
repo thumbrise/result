@@ -4,22 +4,23 @@ namespace Thumbrise\Result\UseCaseResult\GoogleTypes;
 
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 
+/**
+ *  Client specified an invalid argument.
+ *
+ *  <code>
+ *      new UseCaseResultInvalidArgument([
+ *           'field1' => ['something wrong 1', 'something wrong 2'],
+ *           'field2' => ['something wrong 1', 'something wrong 2'],
+ *      ])
+ *  </code>.
+ *
+ *  <code>
+ *      new UseCaseResultInvalidArgument($validator->failed())
+ *  </code>
+ */
 class UseCaseResultInvalidArgument extends UseCaseResult
 {
     /**
-     * Client specified an invalid argument.
-     *
-     * <code>
-     *     new UseCaseResultInvalidArgument([
-     *          'field1' => ['something wrong 1', 'something wrong 2'],
-     *          'field2' => ['something wrong 1', 'something wrong 2'],
-     *     ])
-     * </code>.
-     *
-     * <code>
-     *     new UseCaseResultInvalidArgument($validator->failed())
-     * </code>
-     *
      * @param array<string, array<int,string>> $fieldViolations Dictionary of field key to field violations. Describes all violations in a client request.
      */
     public function __construct(private readonly array $fieldViolations)

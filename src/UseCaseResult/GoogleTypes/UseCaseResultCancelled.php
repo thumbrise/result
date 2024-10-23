@@ -4,6 +4,11 @@ namespace Thumbrise\Result\UseCaseResult\GoogleTypes;
 
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 
+/**
+ * Request cancelled by the client.
+ *
+ * ExampleErrorMessage - Request cancelled by the client.
+ */
 class UseCaseResultCancelled extends UseCaseResult
 {
     public function isError(): bool
