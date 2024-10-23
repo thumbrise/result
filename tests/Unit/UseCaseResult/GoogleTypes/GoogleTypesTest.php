@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Thumbrise\Result\Tests\Unit\TestCase;
 use Thumbrise\Result\UseCaseResult\GoogleTypes\UseCaseResultAborted;
 use Thumbrise\Result\UseCaseResult\GoogleTypes\UseCaseResultAlreadyExists;
+use Thumbrise\Result\UseCaseResult\GoogleTypes\UseCaseResultCancelled;
 use Thumbrise\Result\UseCaseResult\GoogleTypes\UseCaseResultCreated;
 use Thumbrise\Result\UseCaseResult\GoogleTypes\UseCaseResultInvalidArgument;
 use Thumbrise\Result\UseCaseResult\GoogleTypes\UseCaseResultOk;
@@ -125,5 +126,23 @@ class GoogleTypesTest extends TestCase
 
         $this->assertEquals($expected, $actual);
         $this->assertTrue($result->isSuccess());
+    }
+
+    #[Test]
+    public function resultCancelled()
+    {
+        $expected = [
+            'error' => [
+                'code'    => 499,
+                'message' => 'Cancelled',
+                'status'  => 'CANCELLED',
+            ],
+        ];
+
+        $result = new UseCaseResultCancelled();
+        $actual = $result->toArray();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertTrue($result->isError());
     }
 }
