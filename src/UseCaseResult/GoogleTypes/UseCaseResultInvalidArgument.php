@@ -49,7 +49,9 @@ class UseCaseResultInvalidArgument extends UseCaseResult
 
     protected function errorDetails(): array
     {
-        return $this->fieldViolations;
+        return [
+            'fieldViolations' => $this->fieldViolations,
+        ];
     }
 
     protected function errorMessage(): string
