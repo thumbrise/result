@@ -2,29 +2,32 @@
 
 namespace Thumbrise\Result\UseCaseResult\GoogleTypes;
 
+use Thumbrise\Result\UseCaseResult\GoogleTypes\ErrorDetails\ErrorDetailsBadRequest;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 
+/**
+ *  Client specified an invalid argument.
+ *
+ *  <code>
+ *      new UseCaseResultInvalidArgument(
+ *          new ErrorDetailsBadRequest([
+ *              'field1' => ['rule1', 'rule2'],
+ *              'field2' => ['rule1', 'rule2'],
+ *          ])
+ *      );
+ *  </code>.
+ *
+ *  <code>
+ *      new UseCaseResultInvalidArgument(new ErrorDetailsBadRequest($validator->failed()))
+ *  </code>
+ */
 class UseCaseResultInvalidArgument extends UseCaseResult
 {
-    /**
-     * Client specified an invalid argument.
-     *
-     * <code>
-     *     new UseCaseResultInvalidArgument([
-     *          'field1' => ['something wrong 1', 'something wrong 2'],
-     *          'field2' => ['something wrong 1', 'something wrong 2'],
-     *     ])
-     * </code>.
-     *
-     * <code>
-     *     new UseCaseResultInvalidArgument($validator->failed())
-     * </code>
-     *
-     * @param array<string, array<int,string>> $fieldViolations Dictionary of field key to field violations. Describes all violations in a client request.
-     */
-    public function __construct(private readonly array $fieldViolations)
-    {
-        parent::__construct();
+    public function __construct(
+        ErrorDetailsBadRequest $details,
+        string $message = 'Invalid argument',
+    ) {
+        parent::__construct($details, $message);
     }
 
     public function isError(): bool
@@ -45,15 +48,5 @@ class UseCaseResultInvalidArgument extends UseCaseResult
     protected function output(): mixed
     {
         return null;
-    }
-
-    protected function errorDetails(): array
-    {
-        return $this->fieldViolations;
-    }
-
-    protected function errorMessage(): string
-    {
-        return 'Invalid argument';
     }
 }

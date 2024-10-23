@@ -23,8 +23,10 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
 
     protected JsonResponse $httpResponse;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly mixed $errorDetails = null,
+        private readonly mixed $errorMessage = null,
+    ) {
         $this->httpResponse = new JsonResponse();
         $this->httpResponse->setStatusCode($this->httpCode());
         $this->httpResponse->setJson($this);
@@ -47,6 +49,8 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     }
 
     /**
+     * Decorates vendor\symfony\http-foundation\Response.
+     *
      * Sets the response status code.
      *
      * If the status text is null it will be automatically populated for the known
@@ -80,9 +84,9 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
             return [
                 'error' => [
                     'code'    => $this->httpResponse->getStatusCode(),
-                    'message' => $this->errorMessage(),
+                    'message' => $this->errorMessage         ?? '',
+                    'details' => (array) $this->errorDetails ?? [],
                     'status'  => $this->errorStatus(),
-                    'details' => $this->errorDetails(),
                 ],
             ];
         }
@@ -101,16 +105,6 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      * Arbitrary data which returns if result is success.
      */
     abstract protected function output(): mixed;
-
-    /**
-     * Arbitrary error details. Any info.
-     */
-    abstract protected function errorDetails(): mixed;
-
-    /**
-     * Arbitrary error description. In example 'Something was wrong'.
-     */
-    abstract protected function errorMessage(): string;
 
     /**
      * String representation of error type category. In example INVALID_ARGUMENT.
