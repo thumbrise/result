@@ -4,11 +4,11 @@ namespace Thumbrise\Result\UseCaseResult\GoogleTypes;
 
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 
+/**
+ * Result is success.
+ */
 class UseCaseResultOk extends UseCaseResult
 {
-    /**
-     * Result is success.
-     */
     public function __construct(private readonly mixed $output)
     {
         parent::__construct();
@@ -22,16 +22,6 @@ class UseCaseResultOk extends UseCaseResult
     protected function output(): mixed
     {
         return $this->output;
-    }
-
-    protected function errorDetails(): mixed
-    {
-        return null;
-    }
-
-    protected function errorMessage(): string
-    {
-        return '';
     }
 
     protected function errorStatus(): string
