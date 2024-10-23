@@ -9,7 +9,10 @@ class UseCaseResultOk extends UseCaseResult
     /**
      * Result is success.
      */
-    public function __construct(private readonly mixed $output) {}
+    public function __construct(private readonly mixed $output)
+    {
+        parent::__construct();
+    }
 
     public function isError(): bool
     {

@@ -22,7 +22,10 @@ class UseCaseResultInvalidArgument extends UseCaseResult
      *
      * @param array<string, array<int,string>> $fieldViolations Dictionary of field key to field violations. Describes all violations in a client request.
      */
-    public function __construct(private readonly array $fieldViolations) {}
+    public function __construct(private readonly array $fieldViolations)
+    {
+        parent::__construct();
+    }
 
     public function isError(): bool
     {

@@ -9,7 +9,10 @@ class UseCaseResultCreated extends UseCaseResult
     /**
      * Result is success and new resource created.
      */
-    public function __construct(private readonly mixed $details) {}
+    public function __construct(private readonly mixed $details)
+    {
+        parent::__construct();
+    }
 
     public function isError(): bool
     {

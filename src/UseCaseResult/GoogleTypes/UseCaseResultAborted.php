@@ -19,7 +19,9 @@ class UseCaseResultAborted extends UseCaseResult
         private readonly string $reason,
         private readonly string $domain,
         private readonly array $metadata,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
     public function isError(): bool
     {

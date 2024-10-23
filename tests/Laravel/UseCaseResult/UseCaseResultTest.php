@@ -56,12 +56,24 @@ class UseCaseResultTest extends TestCase
     {
         $status = 409;
         Route::get('test', function () use ($status) {
-            return (new UseCaseResultStubSuccess())->setStatusCode($status);
+            $r = new UseCaseResultStubError();
+
+            $r->setStatusCode($status);
+
+            return $r;
         });
 
         $response = $this->get('test');
 
         $response->assertStatus($status);
+        $response->assertJson([
+            'error' => [
+                'code'    => $status,
+                'message' => 'Some error message',
+                'status'  => 'SOME_ERROR_STATUS',
+                'details' => ['hehe' => 'haha'],
+            ],
+        ]);
     }
 
     #[Test]

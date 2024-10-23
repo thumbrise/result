@@ -23,7 +23,14 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
 {
     use ForwardsCalls;
 
-    protected ?JsonResponse $httpResponse = null;
+    protected JsonResponse $httpResponse;
+
+    public function __construct()
+    {
+        $this->httpResponse = response()->json();
+        $this->httpResponse->setStatusCode($this->httpCode());
+        $this->httpResponse->setJson($this);
+    }
 
     /**
      * @param mixed $method
@@ -33,9 +40,11 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      */
     public function __call(string $method, array $parameters)
     {
-        $response = $this->response();
+        $result = $this->forwardDecoratedCallTo($this->httpResponse, $method, $parameters);
 
-        return $this->forwardDecoratedCallTo($response, $method, $parameters);
+        $this->httpResponse->setJson($this);
+
+        return $result;
     }
 
     public function __toString(): string
@@ -60,7 +69,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
         if ($this->isError()) {
             return [
                 'error' => [
-                    'code'    => $this->httpCode(),
+                    'code'    => $this->httpResponse->getStatusCode(),
                     'message' => $this->errorMessage(),
                     'status'  => $this->errorStatus(),
                     'details' => $this->errorDetails(),
@@ -75,7 +84,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
 
     public function toResponse($request): Application|\Illuminate\Foundation\Application|JsonResponse|Response|ResponseFactory
     {
-        return $this->response();
+        return $this->httpResponse;
     }
 
     /**
@@ -102,15 +111,4 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      * Number representation of http status.
      */
     abstract protected function httpCode(): int;
-
-    private function response()
-    {
-        if (empty($this->httpResponse)) {
-            $this->httpResponse = response()->json();
-            $this->httpResponse->setStatusCode($this->httpCode());
-            $this->httpResponse->setContent($this);
-        }
-
-        return $this->httpResponse;
-    }
 }
