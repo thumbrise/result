@@ -77,14 +77,20 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     public function toArray(): array
     {
         if ($this->isError()) {
-            return [
+            $result = [
                 'error' => [
                     'code'    => $this->httpResponse->getStatusCode(),
                     'message' => $this->errorMessage(),
                     'status'  => $this->errorStatus(),
-                    'details' => $this->errorDetails(),
                 ],
             ];
+
+            $errorDetails = $this->errorDetails();
+            if ($errorDetails) {
+                $result['error']['details'] = $errorDetails;
+            }
+
+            return $result;
         }
 
         return [
