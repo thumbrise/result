@@ -12,8 +12,6 @@ use Illuminate\Support\Traits\ForwardsCalls;
 use JsonSerializable;
 use Stringable;
 
-use function response;
-
 /**
  * @template T
  *
@@ -27,7 +25,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
 
     public function __construct()
     {
-        $this->httpResponse = response()->json();
+        $this->httpResponse = new JsonResponse();
         $this->httpResponse->setStatusCode($this->httpCode());
         $this->httpResponse->setJson($this);
     }
