@@ -1,25 +1,25 @@
 <?php
 
-namespace Thumbrise\Result\Tests\Stubs;
+namespace Thumbrise\Result\UseCaseResult\Types;
 
 use Thumbrise\Result\UseCaseResult\Parameters;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 use UnitEnum;
 
 /**
- * @internal
+ *  Client does not have sufficient permission. This can happen because the token does not have the right scopes, the client doesn't have permission.
+ *
+ *  ExampleErrorMessage - Permission 'xxx' denied on resource 'yyy'.
  */
-class UseCaseResultStubError extends UseCaseResult
+class UseCaseResultPermissionDenied extends UseCaseResult
 {
     public function __construct(
-        array $details = ['hehe' => 'haha'],
-        string $message = 'Some error message',
-        null|string|UnitEnum $reason = 'TEST_REASON',
+        string $message = 'Forbidden, permission denied',
+        null|string|UnitEnum $reason = null,
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;
         $parameters->errorReason  = $reason;
-        $parameters->errorDetails = $details;
         parent::__construct($parameters);
     }
 
@@ -30,7 +30,7 @@ class UseCaseResultStubError extends UseCaseResult
 
     protected function errorCategory(): string
     {
-        return 'SOME_ERROR_STATUS';
+        return 'PERMISSION_DENIED';
     }
 
     protected function httpCode(): int

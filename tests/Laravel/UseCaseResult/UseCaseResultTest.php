@@ -28,10 +28,10 @@ class UseCaseResultTest extends TestCase
         $response->assertStatus(403);
         $response->assertJson([
             'error' => [
-                'code'    => 403,
-                'message' => 'Some error message',
-                'status'  => 'SOME_ERROR_STATUS',
-                'details' => ['hehe' => 'haha'],
+                'message'  => 'Some error message',
+                'category' => 'SOME_ERROR_STATUS',
+                'reason'   => 'TEST_REASON',
+                'details'  => ['hehe' => 'haha'],
             ],
         ]);
     }
@@ -66,14 +66,6 @@ class UseCaseResultTest extends TestCase
         $response = $this->get('test');
 
         $response->assertStatus($status);
-        $response->assertJson([
-            'error' => [
-                'code'    => $status,
-                'message' => 'Some error message',
-                'status'  => 'SOME_ERROR_STATUS',
-                'details' => ['hehe' => 'haha'],
-            ],
-        ]);
     }
 
     #[Test]

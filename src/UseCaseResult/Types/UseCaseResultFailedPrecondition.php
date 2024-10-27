@@ -1,22 +1,26 @@
 <?php
 
-namespace Thumbrise\Result\UseCaseResult\GoogleTypes;
+namespace Thumbrise\Result\UseCaseResult\Types;
 
-use Thumbrise\Result\UseCaseResult\GoogleTypes\ErrorDetails\ErrorDetailsPreconditionFailure;
+use Thumbrise\Result\UseCaseResult\Parameters;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
+use UnitEnum;
 
 /**
  * Request can not be executed in the current system state, such as deleting a non-empty directory.
  *
- * Resource xxx is a non-empty directory, so it cannot be deleted.
+ * ExampleErrorMessage - Resource xxx is a non-empty directory, so it cannot be deleted.
  */
 class UseCaseResultFailedPrecondition extends UseCaseResult
 {
     public function __construct(
-        ErrorDetailsPreconditionFailure $details,
         string $message = 'Failed precondition',
+        null|string|UnitEnum $reason = null,
     ) {
-        parent::__construct($details, $message);
+        $parameters               = new Parameters();
+        $parameters->errorMessage = $message;
+        $parameters->errorReason  = $reason;
+        parent::__construct($parameters);
     }
 
     public function isError(): bool
@@ -24,7 +28,7 @@ class UseCaseResultFailedPrecondition extends UseCaseResult
         return true;
     }
 
-    protected function errorStatus(): string
+    protected function errorCategory(): string
     {
         return 'FAILED_PRECONDITION';
     }
@@ -32,10 +36,5 @@ class UseCaseResultFailedPrecondition extends UseCaseResult
     protected function httpCode(): int
     {
         return 400;
-    }
-
-    protected function output(): mixed
-    {
-        return null;
     }
 }

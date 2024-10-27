@@ -1,7 +1,8 @@
 <?php
 
-namespace Thumbrise\Result\UseCaseResult\GoogleTypes;
+namespace Thumbrise\Result\UseCaseResult\Types;
 
+use Thumbrise\Result\UseCaseResult\Parameters;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 
 /**
@@ -11,7 +12,9 @@ class UseCaseResultOk extends UseCaseResult
 {
     public function __construct(private readonly mixed $output)
     {
-        parent::__construct();
+        $parameters                = new Parameters();
+        $parameters->successOutput = $this->output;
+        parent::__construct($parameters);
     }
 
     public function isError(): bool
@@ -19,12 +22,7 @@ class UseCaseResultOk extends UseCaseResult
         return false;
     }
 
-    protected function output(): mixed
-    {
-        return $this->output;
-    }
-
-    protected function errorStatus(): string
+    protected function errorCategory(): string
     {
         return '';
     }

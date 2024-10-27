@@ -1,9 +1,10 @@
 <?php
 
-namespace Thumbrise\Result\UseCaseResult\GoogleTypes;
+namespace Thumbrise\Result\UseCaseResult\Types;
 
-use Thumbrise\Result\UseCaseResult\GoogleTypes\ErrorDetails\ErrorDetailsResourceInfo;
+use Thumbrise\Result\UseCaseResult\Parameters;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
+use UnitEnum;
 
 /**
  * A specified resource is not found.
@@ -13,10 +14,13 @@ use Thumbrise\Result\UseCaseResult\UseCaseResult;
 class UseCaseResultNotFound extends UseCaseResult
 {
     public function __construct(
-        ErrorDetailsResourceInfo $details,
         string $message = 'Not found',
+        null|string|UnitEnum $reason = null,
     ) {
-        parent::__construct($details, $message);
+        $parameters               = new Parameters();
+        $parameters->errorMessage = $message;
+        $parameters->errorReason  = $reason;
+        parent::__construct($parameters);
     }
 
     public function isError(): bool
@@ -24,12 +28,7 @@ class UseCaseResultNotFound extends UseCaseResult
         return true;
     }
 
-    protected function output(): string
-    {
-        return '';
-    }
-
-    protected function errorStatus(): string
+    protected function errorCategory(): string
     {
         return 'NOT_FOUND';
     }
