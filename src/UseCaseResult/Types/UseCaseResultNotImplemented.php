@@ -15,7 +15,7 @@ class UseCaseResultNotImplemented extends UseCaseResult
 {
     public function __construct(
         string $message = 'Not implemented',
-        null|string|UnitEnum $reason = null,
+        string|UnitEnum $reason = 'UNKNOWN',
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;

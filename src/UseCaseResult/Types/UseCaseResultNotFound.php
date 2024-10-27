@@ -15,7 +15,7 @@ class UseCaseResultNotFound extends UseCaseResult
 {
     public function __construct(
         string $message = 'Not found',
-        null|string|UnitEnum $reason = null,
+        string|UnitEnum $reason = 'UNKNOWN',
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;

@@ -21,7 +21,7 @@ class UseCaseResultResourceExhausted extends UseCaseResult
         int $limit,
         string $resetAt,
         string $message = 'Resource exhausted, too many attempts',
-        null|string|UnitEnum $reason = null,
+        string|UnitEnum $reason = 'UNKNOWN',
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;

@@ -31,7 +31,7 @@ class UseCaseResultInvalidArgument extends UseCaseResult
     public function __construct(
         array $fieldViolations,
         string $message = 'Invalid argument',
-        null|string|UnitEnum $reason = null,
+        string|UnitEnum $reason = 'UNKNOWN',
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;

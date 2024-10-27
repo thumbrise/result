@@ -15,7 +15,7 @@ class UseCaseResultFailedPrecondition extends UseCaseResult
 {
     public function __construct(
         string $message = 'Failed precondition',
-        null|string|UnitEnum $reason = null,
+        string|UnitEnum $reason = 'UNKNOWN',
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;

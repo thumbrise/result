@@ -15,7 +15,7 @@ class UseCaseResultInternal extends UseCaseResult
 {
     public function __construct(
         string $message = 'Internal error',
-        null|string|UnitEnum $reason = null,
+        string|UnitEnum $reason = 'UNKNOWN',
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;
