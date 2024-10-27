@@ -11,10 +11,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Traits\ForwardsCalls;
 use JsonSerializable;
 use Stringable;
+use UnitEnum;
 
 /**
- * @template T
- *
  * @mixin    JsonResponse
  */
 abstract class UseCaseResult implements Stringable, JsonSerializable, Responsable
@@ -22,10 +21,16 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     use ForwardsCalls;
 
     protected JsonResponse $httpResponse;
+    private static bool $debugInfoEnabled = false;
+    private ?Debug $debug                 = null;
+
+    /**
+     * @var null|mixed
+     */
+    private mixed $meta = null;
 
     public function __construct(
-        private readonly mixed $errorDetails = null,
-        private readonly mixed $errorMessage = null,
+        private readonly ?Parameters $parameters = null,
     ) {
         $this->httpResponse = new JsonResponse();
         $this->httpResponse->setStatusCode($this->httpCode());
@@ -46,6 +51,11 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     public function __toString(): string
     {
         return json_encode($this);
+    }
+
+    public static function enableDebugInfo(bool $value): void
+    {
+        self::$debugInfoEnabled = $value;
     }
 
     /**
@@ -81,19 +91,60 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     public function toArray(): array
     {
         if ($this->isError()) {
-            return [
+            $result = [
                 'error' => [
-                    'code'    => $this->httpResponse->getStatusCode(),
-                    'message' => $this->errorMessage         ?? '',
-                    'details' => (array) $this->errorDetails ?? [],
-                    'status'  => $this->errorStatus(),
+                    'category' => $this->errorCategory(),
+                    'message'  => $this->parameters?->errorMessage                           ?? '',
+                    'reason'   => $this->prepareErrorReason($this->parameters?->errorReason) ?? '',
+                    'details'  => (array) $this->parameters?->errorDetails                   ?? [],
                 ],
+            ];
+
+            if (self::$debugInfoEnabled) {
+                $result['error']['debug'] = [
+                    'message'  => $this->debug?->message  ?? '',
+                    'trace'    => $this->debug?->trace    ?? debug_backtrace(~DEBUG_BACKTRACE_PROVIDE_OBJECT),
+                    'metadata' => $this->debug?->metadata ?? [],
+                ];
+            }
+        } else {
+            $result = [
+                'data' => $this->parameters?->successOutput,
             ];
         }
 
-        return [
-            'data' => $this->output(),
-        ];
+        if (isset($this->meta)) {
+            $result['meta'] = $this->meta;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Add context data. Additional meta for needs in specific responses.
+     *
+     * @return $this
+     */
+    public function withMeta(mixed $value = null): static
+    {
+        $this->meta = $value;
+
+        return $this;
+    }
+
+    /**
+     * Add debug data. Its will shows up if enableDebugInfo(true).
+     *
+     * @return $this
+     */
+    public function withDebug(?string $message = null, ?array $trace = null, ?array $metadata = null): static
+    {
+        $this->debug           = new Debug();
+        $this->debug->message  = $message;
+        $this->debug->trace    = $trace;
+        $this->debug->metadata = $metadata;
+
+        return $this;
     }
 
     public function toResponse($request): Application|\Illuminate\Foundation\Application|JsonResponse|Response|ResponseFactory
@@ -102,17 +153,25 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     }
 
     /**
-     * Arbitrary data which returns if result is success.
-     */
-    abstract protected function output(): mixed;
-
-    /**
      * String representation of error type category. In example INVALID_ARGUMENT.
      */
-    abstract protected function errorStatus(): string;
+    abstract protected function errorCategory(): string;
 
     /**
      * Number representation of http status.
      */
     abstract protected function httpCode(): int;
+
+    /**
+     * @return mixed|string
+     */
+    private function prepareErrorReason(mixed $code): mixed
+    {
+        if ($code instanceof UnitEnum) {
+            $separator = '/';
+            $code      = class_basename($code).$separator.$code->name;
+        }
+
+        return $code;
+    }
 }

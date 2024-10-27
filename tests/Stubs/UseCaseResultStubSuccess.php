@@ -2,6 +2,7 @@
 
 namespace Thumbrise\Result\Tests\Stubs;
 
+use Thumbrise\Result\UseCaseResult\Parameters;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 
 /**
@@ -9,32 +10,19 @@ use Thumbrise\Result\UseCaseResult\UseCaseResult;
  */
 class UseCaseResultStubSuccess extends UseCaseResult
 {
+    public function __construct(array $output = ['is' => 'ok'])
+    {
+        $parameters                = new Parameters();
+        $parameters->successOutput = $output;
+        parent::__construct($parameters);
+    }
+
     public function isError(): bool
     {
         return false;
     }
 
-    protected function output(): mixed
-    {
-        return ['is' => 'ok'];
-    }
-
-    protected function errorDetails(): mixed
-    {
-        return null;
-    }
-
-    protected function errorMessage(): string
-    {
-        return '';
-    }
-
-    protected function errorStatus(): string
-    {
-        return '';
-    }
-
-    protected function errorReason(): string
+    protected function errorCategory(): string
     {
         return '';
     }

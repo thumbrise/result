@@ -1,25 +1,25 @@
 <?php
 
-namespace Thumbrise\Result\Tests\Stubs;
+namespace Thumbrise\Result\UseCaseResult\Types;
 
 use Thumbrise\Result\UseCaseResult\Parameters;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 use UnitEnum;
 
 /**
- * @internal
+ * API method not implemented by the server.
+ *
+ * ExampleErrorMessage - Method 'xxx' not implemented.
  */
-class UseCaseResultStubError extends UseCaseResult
+class UseCaseResultNotImplemented extends UseCaseResult
 {
     public function __construct(
-        array $details = ['hehe' => 'haha'],
-        string $message = 'Some error message',
-        null|string|UnitEnum $reason = 'TEST_REASON',
+        string $message = 'Not implemented',
+        null|string|UnitEnum $reason = null,
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;
         $parameters->errorReason  = $reason;
-        $parameters->errorDetails = $details;
         parent::__construct($parameters);
     }
 
@@ -30,11 +30,11 @@ class UseCaseResultStubError extends UseCaseResult
 
     protected function errorCategory(): string
     {
-        return 'SOME_ERROR_STATUS';
+        return 'NOT_IMPLEMENTED';
     }
 
     protected function httpCode(): int
     {
-        return 403;
+        return 501;
     }
 }

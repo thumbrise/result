@@ -1,25 +1,25 @@
 <?php
 
-namespace Thumbrise\Result\Tests\Stubs;
+namespace Thumbrise\Result\UseCaseResult\Types;
 
 use Thumbrise\Result\UseCaseResult\Parameters;
 use Thumbrise\Result\UseCaseResult\UseCaseResult;
 use UnitEnum;
 
 /**
- * @internal
+ * Internal server error. Typically, a server bug.
+ *
+ * Since the client cannot fix the server error, it is not useful to generate additional error details. To avoid leaking sensitive information under error conditions, it is recommended not to generate any error message. Use withDebug in dev environment.
  */
-class UseCaseResultStubError extends UseCaseResult
+class UseCaseResultInternal extends UseCaseResult
 {
     public function __construct(
-        array $details = ['hehe' => 'haha'],
-        string $message = 'Some error message',
-        null|string|UnitEnum $reason = 'TEST_REASON',
+        string $message = 'Internal error',
+        null|string|UnitEnum $reason = null,
     ) {
         $parameters               = new Parameters();
         $parameters->errorMessage = $message;
         $parameters->errorReason  = $reason;
-        $parameters->errorDetails = $details;
         parent::__construct($parameters);
     }
 
@@ -30,11 +30,11 @@ class UseCaseResultStubError extends UseCaseResult
 
     protected function errorCategory(): string
     {
-        return 'SOME_ERROR_STATUS';
+        return 'INTERNAL';
     }
 
     protected function httpCode(): int
     {
-        return 403;
+        return 500;
     }
 }
