@@ -19,12 +19,12 @@ class UseCaseResultTest extends TestCase
     {
         UseCaseResult::enableDebugInfo(true);
 
-        $message         = 'Some error';
-        $reason          = 'SOME_REASON';
-        $details         = ['s' => 'h'];
-        $contextMessage  = 'there internal problem';
-        $contextTrace    = ['here', 'and here', 'from here'];
-        $contextMetadata = ['maybe its will help you' => 'abrakadabra'];
+        $message       = 'Some error';
+        $reason        = 'SOME_REASON';
+        $details       = ['s' => 'h'];
+        $debugMessage  = 'there internal problem';
+        $debugTrace    = ['here', 'and here', 'from here'];
+        $debugMetadata = ['maybe its will help you' => 'abrakadabra'];
 
         $expected = [
             'error' => [
@@ -33,15 +33,15 @@ class UseCaseResultTest extends TestCase
                 'details'  => $details,
                 'category' => 'SOME_ERROR_STATUS',
                 'debug'    => [
-                    'message'  => $contextMessage,
-                    'trace'    => $contextTrace,
-                    'metadata' => $contextMetadata,
+                    'message'  => $debugMessage,
+                    'trace'    => $debugTrace,
+                    'metadata' => $debugMetadata,
                 ],
             ],
         ];
 
         $result = (new UseCaseResultStubError($details, $message, $reason))
-            ->withDebug($contextMessage, $contextTrace, $contextMetadata)
+            ->withDebug($debugMessage, $debugTrace, $debugMetadata)
         ;
 
         $actual = $result->toArray();
