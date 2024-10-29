@@ -81,4 +81,56 @@ class UseCaseResultTest extends TestCase
 
         $response->assertHeader($headerKey, $headerValue);
     }
+
+    #[Test]
+    public function metaAdds()
+    {
+        $meta = ['some' => 'value'];
+        Route::get('test', function () use ($meta) {
+            return (new UseCaseResultStubError())->withMeta($meta);
+        });
+
+        $response = $this->get('test');
+
+        $response->assertJson([
+            'error' => [
+                'message'  => 'Some error message',
+                'category' => 'SOME_ERROR_STATUS',
+                'reason'   => 'TEST_REASON',
+                'details'  => ['hehe' => 'haha'],
+            ],
+            'meta' => $meta,
+        ]);
+    }
+
+    #[Test]
+    public function debugAdds()
+    {
+        UseCaseResult::enableDebugInfo(true);
+
+        $debugMessage  = 'there internal problem';
+        $debugTrace    = ['here', 'and here', 'from here'];
+        $debugMetadata = ['maybe its will help you' => 'abrakadabra'];
+        Route::get('test', function () use ($debugMetadata, $debugTrace, $debugMessage) {
+            return (new UseCaseResultStubError())->withDebug($debugMessage, $debugTrace, $debugMetadata);
+        });
+
+        $response = $this->get('test');
+
+        $response->assertJson([
+            'error' => [
+                'message'  => 'Some error message',
+                'category' => 'SOME_ERROR_STATUS',
+                'reason'   => 'TEST_REASON',
+                'details'  => ['hehe' => 'haha'],
+                'debug'    => [
+                    'message'  => $debugMessage,
+                    'trace'    => $debugTrace,
+                    'metadata' => $debugMetadata,
+                ],
+            ],
+        ]);
+
+        UseCaseResult::enableDebugInfo(false);
+    }
 }

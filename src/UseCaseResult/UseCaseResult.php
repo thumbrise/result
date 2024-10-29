@@ -34,7 +34,6 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     ) {
         $this->httpResponse = new JsonResponse();
         $this->httpResponse->setStatusCode($this->httpCode());
-        $this->httpResponse->setJson($this);
     }
 
     /**
@@ -146,6 +145,8 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
 
     public function toResponse($request): Application|\Illuminate\Foundation\Application|JsonResponse|Response|ResponseFactory
     {
+        $this->httpResponse->setJson($this);
+
         return $this->httpResponse;
     }
 
