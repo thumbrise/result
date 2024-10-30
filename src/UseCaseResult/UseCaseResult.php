@@ -67,9 +67,11 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      *
      * @final
      */
-    public function setStatusCode(int $code, ?string $text = null): JsonResponse
+    public function setStatusCode(int $code, ?string $text = null): static
     {
-        return $this->httpResponse->setStatusCode($code, $text);
+        $this->httpResponse->setStatusCode($code, $text);
+
+        return $this;
     }
 
     abstract public function isError(): bool;
