@@ -6,10 +6,12 @@ use DateTime;
 use PHPUnit\Framework\Attributes\Test;
 use Thumbrise\Result\Tests\Unit\TestCase;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultFailedPrecondition;
+use Thumbrise\Result\UseCaseResult\Types\UseCaseResultInternal;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultInvalidArgument;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultNotFound;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultNotImplemented;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultOk;
+use Thumbrise\Result\UseCaseResult\Types\UseCaseResultOperationError;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultPermissionDenied;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultResourceExhausted;
 use Thumbrise\Result\UseCaseResult\Types\UseCaseResultUnauthenticated;
@@ -81,6 +83,48 @@ class TypesTest extends TestCase
             $message,
             $reason
         );
+        $actual = $result->toArray();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertTrue($result->isError());
+    }
+
+    #[Test]
+    public function resultInternal()
+    {
+        $message  = 'Some error';
+        $reason   = 'SOME_REASON';
+        $expected = [
+            'error' => [
+                'reason'   => $reason,
+                'message'  => $message,
+                'details'  => [],
+                'category' => 'INTERNAL',
+            ],
+        ];
+
+        $result = new UseCaseResultInternal($message, $reason);
+        $actual = $result->toArray();
+
+        $this->assertEquals($expected, $actual);
+        $this->assertTrue($result->isError());
+    }
+
+    #[Test]
+    public function resultOperationError()
+    {
+        $message  = 'Some error';
+        $reason   = 'SOME_REASON';
+        $expected = [
+            'error' => [
+                'reason'   => $reason,
+                'message'  => $message,
+                'details'  => [],
+                'category' => 'OPERATION_ERROR',
+            ],
+        ];
+
+        $result = new UseCaseResultOperationError($message, $reason);
         $actual = $result->toArray();
 
         $this->assertEquals($expected, $actual);
