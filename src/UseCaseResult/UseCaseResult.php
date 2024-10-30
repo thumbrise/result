@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Traits\ForwardsCalls;
 use JsonSerializable;
 use Stringable;
+use Throwable;
 use UnitEnum;
 
 /**
@@ -21,8 +22,8 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     use ForwardsCalls;
 
     protected JsonResponse $httpResponse;
-    private static bool $debugInfoEnabled = false;
-    private ?Debug $debug                 = null;
+    private static bool $debugEnabled = false;
+    private ?array $debugInfo         = null;
 
     /**
      * @var null|mixed
@@ -54,7 +55,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
 
     public static function enableDebugInfo(bool $value): void
     {
-        self::$debugInfoEnabled = $value;
+        self::$debugEnabled = $value;
     }
 
     /**
@@ -98,11 +99,10 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
                 ],
             ];
 
-            if (self::$debugInfoEnabled) {
+            if (self::$debugEnabled) {
                 $result['error']['debug'] = [
-                    'message'  => $this->debug?->message  ?? '',
-                    'trace'    => $this->debug?->trace    ?? debug_backtrace(~DEBUG_BACKTRACE_PROVIDE_OBJECT),
-                    'metadata' => $this->debug?->metadata ?? [],
+                    'info'  => $this->debugInfo ?? [],
+                    'trace' => $this->throwableToArray(new Exception()),
                 ];
             }
         } else {
@@ -135,12 +135,9 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      *
      * @return $this
      */
-    public function withDebug(?string $message = null, ?array $trace = null, ?array $metadata = null): static
+    public function withDebug(array $info): static
     {
-        $this->debug           = new Debug();
-        $this->debug->message  = $message;
-        $this->debug->trace    = $trace;
-        $this->debug->metadata = $metadata;
+        $this->debugInfo = $info;
 
         return $this;
     }
@@ -161,6 +158,24 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      * Number representation of http status.
      */
     abstract protected function httpCode(): int;
+
+    private function throwableToArray(Throwable $e): array
+    {
+        $r = [
+            'message' => $e->getMessage(),
+            'code'    => $e->getCode(),
+            'file'    => $e->getFile(),
+            'line'    => $e->getLine(),
+            'trace'   => $e->getTrace(),
+        ];
+
+        $prev = $e->getPrevious();
+        if ($prev) {
+            $r['previous'] = $this->throwableToArray($prev);
+        }
+
+        return $r;
+    }
 
     /**
      * @return mixed|string

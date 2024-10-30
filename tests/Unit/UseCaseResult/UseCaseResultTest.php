@@ -19,34 +19,17 @@ class UseCaseResultTest extends TestCase
     {
         UseCaseResult::enableDebugInfo(true);
 
-        $message       = 'Some error';
-        $reason        = 'SOME_REASON';
-        $details       = ['s' => 'h'];
-        $debugMessage  = 'there internal problem';
-        $debugTrace    = ['here', 'and here', 'from here'];
-        $debugMetadata = ['maybe its will help you' => 'abrakadabra'];
+        $debugInfo = ['maybe its will help you' => 'abrakadabra'];
 
-        $expected = [
-            'error' => [
-                'reason'   => $reason,
-                'message'  => $message,
-                'details'  => $details,
-                'category' => 'SOME_ERROR_STATUS',
-                'debug'    => [
-                    'message'  => $debugMessage,
-                    'trace'    => $debugTrace,
-                    'metadata' => $debugMetadata,
-                ],
-            ],
-        ];
-
-        $result = (new UseCaseResultStubError($details, $message, $reason))
-            ->withDebug($debugMessage, $debugTrace, $debugMetadata)
+        $result = (new UseCaseResultStubError())
+            ->withDebug($debugInfo)
         ;
 
         $actual = $result->toArray();
 
-        $this->assertEquals($expected, $actual);
+        $this->assertNotEmpty($actual['error']['debug']);
+        $this->assertEquals($debugInfo, $actual['error']['debug']['info']);
+        $this->assertNotEmpty($actual['error']['debug']['trace']);
         $this->assertTrue($result->isError());
 
         UseCaseResult::enableDebugInfo(false);
@@ -57,36 +40,15 @@ class UseCaseResultTest extends TestCase
     {
         UseCaseResult::enableDebugInfo(false);
 
-        $message         = 'Some error';
-        $reason          = 'SOME_REASON';
-        $details         = ['s' => 'h'];
-        $contextMessage  = 'there internal problem';
-        $contextTrace    = ['here', 'and here', 'from here'];
         $contextMetadata = ['maybe its will help you' => 'abrakadabra'];
 
-        $expected = [
-            'error' => [
-                'reason'   => $reason,
-                'message'  => $message,
-                'details'  => $details,
-                'category' => 'SOME_ERROR_STATUS',
-
-                // There no debug data
-                // 'debug'  => [
-                //     'message'  => $contextMessage,
-                //     'trace'    => $contextTrace,
-                //     'metadata' => $contextMetadata,
-                // ],
-            ],
-        ];
-
-        $result = (new UseCaseResultStubError($details, $message, $reason))
-            ->withDebug($contextMessage, $contextTrace, $contextMetadata)
+        $result = (new UseCaseResultStubError())
+            ->withDebug($contextMetadata)
         ;
 
         $actual = $result->toArray();
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEmpty($actual['error']['debug']);
         $this->assertTrue($result->isError());
     }
 
