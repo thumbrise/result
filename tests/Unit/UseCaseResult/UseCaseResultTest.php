@@ -48,7 +48,7 @@ class UseCaseResultTest extends TestCase
 
         $actual = $result->toArray();
 
-        $this->assertEmpty($actual['error']['debug']);
+        $this->assertTrue(empty($actual['error']['debug']));
         $this->assertTrue($result->isError());
     }
 

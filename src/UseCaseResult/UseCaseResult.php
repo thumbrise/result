@@ -29,6 +29,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      * @var null|mixed
      */
     private mixed $meta = null;
+    private ?Throwable $debugException;
 
     public function __construct(
         private readonly ?Parameters $parameters = null,
@@ -102,7 +103,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
             if (self::$debugEnabled) {
                 $result['error']['debug'] = [
                     'info'  => $this->debugInfo ?? [],
-                    'trace' => $this->throwableToArray(new Exception()),
+                    'trace' => $this->throwableToArray($this->debugException ?? new Exception()),
                 ];
             }
         } else {
@@ -147,6 +148,13 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
         $this->httpResponse->setJson($this);
 
         return $this->httpResponse;
+    }
+
+    public function withDebugException(Throwable $exception): static
+    {
+        $this->debugException = $exception;
+
+        return $this;
     }
 
     /**
