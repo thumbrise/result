@@ -29,7 +29,6 @@ class UseCaseResultTest extends TestCase
 
         $this->assertNotEmpty($actual['error']['debug']);
         $this->assertEquals($debugInfo, $actual['error']['debug']['info']);
-        $this->assertNotEmpty($actual['error']['debug']['trace']);
         $this->assertTrue($result->isError());
 
         UseCaseResult::enableDebugInfo(false);

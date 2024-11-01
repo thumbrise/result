@@ -2,7 +2,6 @@
 
 namespace Thumbrise\Result\UseCaseResult;
 
-use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\Support\Responsable;
@@ -11,7 +10,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Traits\ForwardsCalls;
 use JsonSerializable;
 use Stringable;
-use Throwable;
 use UnitEnum;
 
 /**
@@ -29,7 +27,6 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      * @var null|mixed
      */
     private mixed $meta = null;
-    private ?Throwable $debugException;
 
     public function __construct(
         private readonly ?Parameters $parameters = null,
@@ -39,10 +36,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
     }
 
     /**
-     * @param mixed $method
-     * @param mixed $parameters
-     *
-     * @throws Exception
+     * @return mixed
      */
     public function __call(string $method, array $parameters)
     {
@@ -102,8 +96,7 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
 
             if (self::$debugEnabled) {
                 $result['error']['debug'] = [
-                    'info'  => $this->debugInfo ?? [],
-                    'trace' => $this->throwableToArray($this->debugException ?? new Exception()),
+                    'info' => $this->debugInfo ?? [],
                 ];
             }
         } else {
@@ -150,13 +143,6 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
         return $this->httpResponse;
     }
 
-    public function withDebugException(Throwable $exception): static
-    {
-        $this->debugException = $exception;
-
-        return $this;
-    }
-
     /**
      * String representation of error type category. In example INVALID_ARGUMENT.
      */
@@ -166,24 +152,6 @@ abstract class UseCaseResult implements Stringable, JsonSerializable, Responsabl
      * Number representation of http status.
      */
     abstract protected function httpCode(): int;
-
-    private function throwableToArray(Throwable $e): array
-    {
-        $r = [
-            'message' => $e->getMessage(),
-            'code'    => $e->getCode(),
-            'file'    => $e->getFile(),
-            'line'    => $e->getLine(),
-            'trace'   => $e->getTrace(),
-        ];
-
-        $prev = $e->getPrevious();
-        if ($prev) {
-            $r['previous'] = $this->throwableToArray($prev);
-        }
-
-        return $r;
-    }
 
     /**
      * @return mixed|string

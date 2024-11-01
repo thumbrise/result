@@ -116,7 +116,6 @@ class UseCaseResultTest extends TestCase
         $response = $this->get('test');
 
         $response->assertJsonPath('error.debug.info', $debugInfo);
-        $response->assertJsonIsObject('error.debug.trace');
         UseCaseResult::enableDebugInfo(false);
     }
 }
